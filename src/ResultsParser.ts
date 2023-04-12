@@ -102,6 +102,7 @@ export default class ResultsParser {
 
   addTestResult(suiteName: any, testCase: any) {
     const testResults: testResult[] = [];
+    const projectSettings = this.getParentConfigInformation(testCase);
     testCase.results.forEach((result) => {
       const tempTestResult = {
         suiteName,

@@ -107,14 +107,8 @@ export default class ResultsParser {
         suiteName,
         name: testCase.title,
         status: result.status,
-        // eslint-disable-next-line no-underscore-dangle
-        browser: testCase.parent?.parent?._projectConfig?.use?.defaultBrowserType
-          ? testCase.parent.parent._projectConfig.use.defaultBrowserType
-          : '',
-        // eslint-disable-next-line no-underscore-dangle
-        projectName: testCase.parent?.parent?._projectConfig?.name
-          ? testCase.parent.parent._projectConfig.name
-          : '',
+        browser: projectSettings.browser,
+        projectName: projectSettings.projectName,
         retry: result.retry,
         retries: testCase.retries,
         startedAt: new Date(result.startTime).toISOString(),
@@ -179,5 +173,17 @@ export default class ResultsParser {
         '',
       );
     return logsStripped;
+  }
+
+  getParentConfigInformation(testCase: any): {projectName: string, browser: string} {
+    if (testCase._projectConfig !== undefined) {
+      return {
+        projectName: testCase._projectConfig.name || '',
+        browser: testCase._projectConfig.use?.defaultBrowserType || '',
+      };
+    } if (testCase.parent) {
+      return this.getParentConfigInformation(testCase.parent);
+    }
+    return { projectName: '', browser: '' };
   }
 }

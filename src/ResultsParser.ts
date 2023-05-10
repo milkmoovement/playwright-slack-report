@@ -143,13 +143,13 @@ export default class ResultsParser {
   }): string {
     if (result.errors.length > 0) {
       const fullError = result.errors
-        .map((e) => `${e.message}\r\n${e.stack ? e.stack : ''}\r\n`)
+        .map((e) => `${e.message}\r\n`)
         .join();
       return this.cleanseReason(fullError);
     }
     return `${this.cleanseReason(
       result.error?.message,
-    )} \n ${this.cleanseReason(result.error?.stack)}`;
+    )}`;
   }
 
   cleanseReason(rawReaseon: string): string {

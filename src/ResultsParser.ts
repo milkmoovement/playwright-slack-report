@@ -143,7 +143,7 @@ export default class ResultsParser {
   }): string {
     if (result.errors.length > 0) {
       const fullError = result.errors
-        .map((e) => `${e.message}\r\n`)
+        .map((e) => `${e.message}`)
         .join();
       return this.cleanseReason(fullError);
     }

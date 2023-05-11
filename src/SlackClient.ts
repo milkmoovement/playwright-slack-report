@@ -54,16 +54,27 @@ export default class SlackClient {
         // under test
         if (options.fakeRequest) {
           chatResponse = await options.fakeRequest();
+          if (chatResponse.ok) {
+            result.push({ channel, outcome: `✅ Message sent to ${channel}` });
+            // eslint-disable-next-line no-console
+            console.log(`✅ Message sent to ${channel}`);
+          } else {
+            result.push({ channel, outcome: `❌ Message not sent to ${channel} \r\n ${JSON.stringify(chatResponse, null, 2)}` });
+          }
         } else {
-          // send request for reals
-          chatResponse = await this.doPostRequest(channel, blocks);
-        }
-        if (chatResponse.ok) {
-          result.push({ channel, outcome: `✅ Message sent to ${channel}` });
-          // eslint-disable-next-line no-console
-          console.log(`✅ Message sent to ${channel}`);
-        } else {
-          result.push({ channel, outcome: `❌ Message not sent to ${channel} \r\n ${JSON.stringify(chatResponse, null, 2)}` });
+          // Slack API only allows messages of 50 blocks or fewer
+          for (let i = 0; i < blocks.length; i += 50) {
+            const chunk = blocks.slice(i, i + 49);
+            chatResponse = await this.doPostRequest(channel, chunk);
+            const messageNumber = blocks.length > 50 ? i / 50 + 1 : null;
+            if (chatResponse.ok) {
+              result.push({ channel, outcome: `✅ Message ${messageNumber} sent to ${channel}` });
+              // eslint-disable-next-line no-console
+              console.log(`✅ Message sent to ${channel}`);
+            } else {
+              result.push({ channel, outcome: `❌ Message ${messageNumber} not sent to ${channel} \r\n ${JSON.stringify(chatResponse, null, 2)}` });
+            }
+          }
         }
       } catch (error: any) {
         result.push({

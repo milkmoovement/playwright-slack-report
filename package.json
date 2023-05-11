@@ -28,7 +28,7 @@
     "lint":"npx eslint . --ext .ts"
   },
   "name": "mm-playwright-slack-reporter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "types": "dist/index.d.ts",
   "repository": "git@github.com:milkmoovement/playwright-slack-report.git",
